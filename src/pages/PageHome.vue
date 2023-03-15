@@ -2,7 +2,7 @@
   <q-page class="constrain 1-pa-md">
     <div class="row row q-col-gutter-lg">
       <div class="col-12 col-sm-8">
-        <template v-if="!loadingPost">
+        <template v-if="!loadingPost && posts.length">
           <q-card
             v-for="post in posts"
             :key="post.id"
@@ -35,11 +35,14 @@
           </q-card>
         </template>
 
+        <template v-else-if="!loadingPost && !posts.length">
+          <h5 class="text-center text-grey">Sem postagens, ainda...</h5>
+        </template>
         <template v-else>
           <q-card flat bordered>
             <q-item>
               <q-item-section avatar>
-                <q-skeleton type="QAvatar" animation="fade" />
+                <q-skeleton type="QAvatar" animation="fade" size="40px" />
               </q-item-section>
 
               <q-item-section>
@@ -98,21 +101,20 @@ export default {
   methods: {
     getPosts() {
       this.loadingPost = true;
-      setTimeout(() => {
-        this.$axios
-          .get("http://localhost:3000/posts")
-          .then((response) => {
-            this.posts = response.data;
-            this.loadingPost = false;
-          })
-          .catch((err) => {
-            this.$q.dialog({
-              title: "Erro",
-              message: "Não foi possível baixar publicações",
-            });
-            this.loadingPost = false;
+
+      this.$axios
+        .get("http://localhost:3000/posts")
+        .then((response) => {
+          this.posts = response.data;
+          this.loadingPost = false;
+        })
+        .catch((err) => {
+          this.$q.dialog({
+            title: "Erro",
+            message: "Não foi possível baixar publicações",
           });
-      }, 3000);
+          this.loadingPost = false;
+        });
     },
   },
   filters: {
