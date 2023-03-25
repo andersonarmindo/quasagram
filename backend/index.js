@@ -3,7 +3,7 @@ Dependencies
 */
 
 const express = require("express");
-const admin = require("firebase-admin");
+var admin = require("firebase-admin");
 
 /*
 Config-express
@@ -36,9 +36,8 @@ app.get("/posts", (request, response) => {
       snapshot.forEach((doc) => {
         posts.push(doc.data());
       });
+      response.send(posts);
     });
-
-  response.send(posts);
 });
 
 /*
