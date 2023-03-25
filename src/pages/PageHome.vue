@@ -103,7 +103,7 @@ export default {
       this.loadingPost = true;
 
       this.$axios
-        .get("http://localhost:3000/posts")
+        .get("http://https://backend-quasagram.onrender.com:3000/posts")
         .then((response) => {
           this.posts = response.data;
           this.loadingPost = false;
