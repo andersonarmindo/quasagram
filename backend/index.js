@@ -5,7 +5,7 @@ Dependencies
 const express = require("express");
 var admin = require("firebase-admin");
 let inspect = require("util").inspect;
-let Busboy = require("busboy");
+const Busboy = require("busboy");
 
 /*
 Config-express
@@ -47,7 +47,32 @@ Endpoint - createPosts
 */
 app.post("/createPost", (request, response) => {
   response.set("Access-Control-Allow-Origin", "*");
-  response.send(request.headers);
+  const busboy = busboy({ headers: request.headers });
+  busboy.on("file", (name, file, info) => {
+    const { filename, encoding, mimeType } = info;
+    console.log(
+      `File [${name}]: filename: %j, encoding: %j, mimeType: %j`,
+      filename,
+      encoding,
+      mimeType
+    );
+    file
+      .on("data", (data) => {
+        console.log(`File [${name}] got ${data.length} bytes`);
+      })
+      .on("close", () => {
+        console.log(`File [${name}] done`);
+      });
+  });
+  busboy.on("field", (name, val, info) => {
+    console.log(`Field [${name}]: value: %j`, val);
+  });
+  busboy.on("close", () => {
+    console.log("Done parsing form!");
+    //response.writeHead(303, { Connection: "close", Location: "/" });
+    response.end();
+  });
+  request.pipe(busboy);
 });
 
 /*
