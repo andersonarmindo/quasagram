@@ -60,7 +60,7 @@
         </q-input>
       </div>
       <div class="row justify-center q-mt-lg">
-        <q-btn unelevated rounded color="grey-10" label="Publicar" />
+        <q-btn @click="addPost()" rounded color="grey-10" label="Publicar" />
       </div>
     </div>
   </q-page>
@@ -201,6 +201,23 @@ export default {
         message: "Não foi possível determinar a sua localização!",
       });
       this.locationLoading = false;
+    },
+    addPost() {
+      let formData = new FormData();
+      formData.append("id", this.post.id);
+      formData.append("caption", this.post.caption);
+      formData.append("location", this.post.location);
+      formData.append("date", this.post.date);
+      formData.append("file", this.post.photo, this.post.id + ".png");
+
+      this.$axios
+        .post(`${process.env.API}/createPost`, formData)
+        .then((response) => {
+          console.log("response: ", response);
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
     },
   },
   mounted() {

@@ -4,6 +4,8 @@ Dependencies
 
 const express = require("express");
 var admin = require("firebase-admin");
+let inspect = require("util").inspect;
+let Busboy = require("busboy");
 
 /*
 Config-express
@@ -14,6 +16,7 @@ const app = express();
 Config-firebase
 */
 const serviceAccount = require("./serviceAccountKey.json");
+let busboy = require("busboy");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -25,7 +28,6 @@ const db = admin.firestore();
 Endpoint - posts
 */
 app.get("/posts", (request, response) => {
-  setTimeout;
   response.set("Access-Control-Allow-Origin", "*");
   let posts = [];
   loadingPosts: false;
@@ -43,9 +45,9 @@ app.get("/posts", (request, response) => {
 /*
 Endpoint - createPosts
 */
-app.get("/createPosts", (request, response) => {
+app.post("/createPost", (request, response) => {
   response.set("Access-Control-Allow-Origin", "*");
-  response.send("createPost");
+  response.send(request.headers);
 });
 
 /*
