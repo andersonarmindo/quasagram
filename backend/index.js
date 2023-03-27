@@ -68,7 +68,7 @@ app.post("/createPost", (request, response) => {
     );
     let filepath = path.join(os.tmpdir(), filename);
     file.pipe(fs.createWriteStream(filepath));
-    fileData = { filepath, mimetype };
+    fileData = { filepath, mimeType };
   });
   bb.on("field", (name, val, info) => {
     console.log(`Field [${name}]: value: %j`, val);
@@ -82,7 +82,7 @@ app.post("/createPost", (request, response) => {
         uploadType: "media",
         metadata: {
           metadata: {
-            contentType: fileData.mimetype,
+            contentType: fileData.mimeType,
             firebaseStorageDownloadTokens: uuid,
           },
         },

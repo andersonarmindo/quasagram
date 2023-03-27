@@ -231,10 +231,7 @@ export default {
         })
         .catch((err) => {
           console.log("err: ", err);
-          this.$q.dialog({
-            title: "Erro",
-            message: "Desculpa, não foi possível publicar!",
-          });
+
           this.$q.loading.hide();
         });
     },
