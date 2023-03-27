@@ -5,7 +5,7 @@ Dependencies
 const express = require("express");
 var admin = require("firebase-admin");
 let inspect = require("util").inspect;
-const Busboy = require("busboy");
+const busboy = require("busboy");
 
 /*
 Config-express
@@ -16,7 +16,6 @@ const app = express();
 Config-firebase
 */
 const serviceAccount = require("./serviceAccountKey.json");
-let busboy = require("busboy");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -47,8 +46,11 @@ Endpoint - createPosts
 */
 app.post("/createPost", (request, response) => {
   response.set("Access-Control-Allow-Origin", "*");
-  const busboy = busboy({ headers: request.headers });
-  busboy.on("file", (name, file, info) => {
+
+  const bb = busboy({ headers: request.headers });
+
+  let fields = {};
+  bb.on("file", (name, file, info) => {
     const { filename, encoding, mimeType } = info;
     console.log(
       `File [${name}]: filename: %j, encoding: %j, mimeType: %j`,
@@ -64,15 +66,18 @@ app.post("/createPost", (request, response) => {
         console.log(`File [${name}] done`);
       });
   });
-  busboy.on("field", (name, val, info) => {
+  bb.on("field", (name, val, info) => {
     console.log(`Field [${name}]: value: %j`, val);
+
+    fields[name] = val;
   });
-  busboy.on("close", () => {
+  bb.on("close", () => {
+    console.log("fields: ", fields);
     console.log("Done parsing form!");
     //response.writeHead(303, { Connection: "close", Location: "/" });
-    response.send("Done parsing Form!");
+    response.send("Done parsing form!");
   });
-  request.pipe(busboy);
+  request.pipe(bb);
 });
 
 /*
