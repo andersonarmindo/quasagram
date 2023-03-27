@@ -70,7 +70,7 @@ app.post("/createPost", (request, response) => {
   busboy.on("close", () => {
     console.log("Done parsing form!");
     //response.writeHead(303, { Connection: "close", Location: "/" });
-    response.end();
+    response.send("Done parsing Form!");
   });
   request.pipe(busboy);
 });
