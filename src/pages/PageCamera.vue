@@ -13,6 +13,7 @@
       <q-btn
         v-if="hasCameraSupport"
         @click="captureImage"
+        :disable="imageCaptured"
         round
         color="grey-10"
         size="lg"
@@ -60,7 +61,13 @@
         </q-input>
       </div>
       <div class="row justify-center q-mt-lg">
-        <q-btn @click="addPost()" rounded color="grey-10" label="Publicar" />
+        <q-btn
+          @click="addPost()"
+          :disable="!post.caption || !post.photo"
+          rounded
+          color="grey-10"
+          label="Publicar"
+        />
       </div>
     </div>
   </q-page>
@@ -174,7 +181,7 @@ export default {
         (err) => {
           console.log("err: ", err);
         },
-        { timeout: 10 }
+        { timeout: 3 }
       );
     },
     getCityAndCountry(position) {
@@ -203,6 +210,7 @@ export default {
       this.locationLoading = false;
     },
     addPost() {
+      this.$q.loading.show();
       let formData = new FormData();
       formData.append("id", this.post.id);
       formData.append("caption", this.post.caption);
@@ -214,9 +222,20 @@ export default {
         .post(`${process.env.API}/createPost`, formData)
         .then((response) => {
           console.log("response: ", response);
+          this.$router.push("/");
+          this.$q.notify({
+            message: "Publicada com Sucesso",
+            avatar: (src = "../../public/img/anderson.jpg"),
+          });
+          this.$q.loading.hide();
         })
         .catch((err) => {
           console.log("err: ", err);
+          this.$q.dialog({
+            title: "Erro",
+            message: "Desculpa, não foi possível publicar!",
+          });
+          this.$q.loading.hide();
         });
     },
   },
